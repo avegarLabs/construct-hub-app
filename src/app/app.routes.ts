@@ -32,6 +32,11 @@ export const routes: Routes = [
             './dispatches/pages/dispatches-page/dispatches-page.component'
           ),
       },
+
+      {
+        path: '**',
+        redirectTo: 'works',
+      },
     ],
   },
   {
