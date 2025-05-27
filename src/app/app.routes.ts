@@ -21,7 +21,7 @@ export const routes: Routes = [
       },
 
       {
-        path: 'resorces',
+        path: 'resources',
         loadComponent: () =>
           import('./resources/pages/resources-page/resources-page.component'),
       },
