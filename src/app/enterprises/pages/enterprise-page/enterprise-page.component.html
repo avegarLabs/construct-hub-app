@@ -1,3 +1,18 @@
-<p>
-  enterprise-page works!
-</p>
+<div class="min-h-screen bg-gray-50 p-6">
+  <div class="max-w-7xl grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+    <!-- Columna del Formulario (col-4) -->
+    <div class="lg:col-span-4">
+      <enterprise-form [enterpriseToEdit]="enterpriseService.currentEnterprise()"
+        (enterpriseAction)="handleEnterpriseAction($event)" />
+    </div>
+
+    <!-- Columna de la Tabla (col-8) -->
+    <div class="lg:col-span-8">
+      <enterprise-list [enterprises]="enterpriseService.list()"
+        (deleteEnterprise)="enterpriseService.removeEnterprise($event)"
+        (editEnterprise)="enterpriseService.setEnterpriseToEdit($event)" />
+    </div>
+
+  </div>
+</div>

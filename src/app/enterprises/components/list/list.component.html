@@ -1,0 +1,31 @@
+<div class="bg-white rounded-xl shadow-lg p-6 h-full">
+  <h2 class="text-2xl font-bold text-gray-800 mb-6">Empresas Constructoras</h2>
+
+  <div class="border border-gray-100 rounded-lg overflow-hidden">
+    <table class="w-full">
+      <thead class="bg-gray-50">
+        <tr>
+          <th class="px-5 py-3.5 text-left text-sm font-semibold text-gray-600">REUP</th>
+          <th class="px-5 py-3.5 text-left text-sm font-semibold text-gray-600">Nombre</th>
+
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100">
+        <!-- Fila de ejemplo -->
+        @for (item of enterprises(); track item.id) {
+        <tr class="hover:bg-gray-50 transition-colors">
+          <td class="px-5 py-4 text-sm text-gray-700 font-medium">{{item.codigo}}</td>
+          <td class="px-5 py-4 text-sm text-gray-600">{{item.nombre}}</td>
+          <td class="px-5 py-4">
+            <div class="flex gap-2">
+              <button class="text-blue-600 hover:text-blue-800 text-sm font-medium" (click)="onEdit(item.id)" >Editar</button>
+              <button class="text-red-600 hover:text-red-800 text-sm font-medium" (click)="onDelete(item.id)">Eliminar</button>
+            </div>
+          </td>
+        </tr>
+        }
+
+      </tbody>
+    </table>
+  </div>
+</div>
