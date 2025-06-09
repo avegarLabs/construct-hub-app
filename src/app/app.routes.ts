@@ -1,6 +1,10 @@
 import { Routes } from '@angular/router';
 
 export const routes: Routes = [
+  { path: 'login',
+    
+     loadComponent: () => import('./auth/login/login/login.component') },
+  
   {
     path: 'dashboard',
     loadComponent: () => import('./dashboard/dashboard/dashboard.component'),
@@ -10,6 +14,14 @@ export const routes: Routes = [
         path: 'works',
         loadComponent: () =>
           import('./works/pages/works-page/works-page.component'),
+      },
+
+      {
+        path: 'works/:id',
+        loadComponent: () =>
+          import('./works/pages/works-details/works-details.component').then(
+            (m) => m.default
+          ),
       },
 
       {
@@ -32,15 +44,11 @@ export const routes: Routes = [
             './dispatches/pages/dispatches-page/dispatches-page.component'
           ),
       },
-
       {
         path: '**',
         redirectTo: 'works',
       },
     ],
   },
-  {
-    path: '**',
-    redirectTo: 'dashboard',
-  },
+  { path: '**', redirectTo: 'login' },
 ];

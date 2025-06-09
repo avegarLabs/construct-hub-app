@@ -1,3 +1,122 @@
-<p>
-  dispatches-page works!
-</p>
+<div class="max-w-8xl mx-auto p-4">
+  <div class="bg-white rounded-xl shadow-md p-6">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
+      <h2 class="text-xl font-bold text-gray-800">
+        Despachos Realizados
+      </h2>
+
+      <div class="flex flex-wrap gap-2 mt-4 md:mt-0">
+       <button type="button" (click)="controlDespachos()"
+                  class="text-emerald-700 hover:text-white border border-emerald-700 hover:bg-emerald-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-3 py-2.5 text-center me-1 mb-1 dark:border-emerald-500 dark:text-emerald-500 dark:hover:text-white dark:hover:bg-emerald-500 dark:focus:ring-emerald-800">Despachos PDF</button>
+        <button type="button"
+          class="text-blue-700 mt-3 mb-3 ml-3 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-3 py-2.5 text-center me-1 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800"
+          (click)="openModalDespacho()">Crear Despacho</button>
+      </div>
+    </div>
+
+
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+      <!-- Filtro por Obra -->
+      <div>
+        <label class="block mb-1 text-sm font-medium text-gray-700">Obra</label>
+        <select (change)="onSelect($event.target.value)"
+          class="w-full px-3 py-2 border rounded-lg text-sm text-gray-700 focus:ring-blue-500 focus:border-blue-500">
+          <option value="">-- Todas --</option>
+          @for (obra of obraServ.list(); track obra.id) {
+          <option [value]="obra.id">{{obra.codigo}} - {{obra.descripcion}}</option>
+          }
+        </select>
+      </div>
+
+      <!-- Filtro por Empresa -->
+      <div>
+        <label class="block mb-1 text-sm font-medium text-gray-700">Empresa</label>
+        <select (change)="onSelectEmpresa($event.target.value)"
+          class="w-full px-3 py-2 border rounded-lg text-sm text-gray-700 focus:ring-blue-500 focus:border-blue-500">
+          <option value="">-- Todas --</option>
+          <@for (empresa of enterpriseList; track empresa.id) { <option [value]="empresa.id">{{empresa.codigo}} -
+            {{empresa.nombre}}</option>
+            }>
+        </select>
+      </div>
+
+      <!-- Filtro por Objeto -->
+      <div>
+        <label class="block mb-1 text-sm font-medium text-gray-700">Objeto</label>
+        <select (change)="onSelectObjeto($event.target.value)"
+          class="w-full px-3 py-2 border rounded-lg text-sm text-gray-700 focus:ring-blue-500 focus:border-blue-500">
+          <option value="">-- Todos --</option>
+          < @for (objeto of objServ.list(); track objeto.id) { <option [value]="objeto.id">{{ob}} {{objeto.descripcion}}
+            </option>
+            }>
+        </select>
+      </div>
+
+      <!-- Filtro por Código -->
+      <div>
+        <button type="button" (click)=" filtrarDespachos()"
+          class="text-blue-700 mt-5 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-3 py-2.5 text-center me-1 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800">Filtrar</button>
+
+        <button
+          class="mt-5 text-gray-700 border border-gray-400 hover:bg-gray-100 font-medium rounded-lg text-sm px-4 py-2"
+          (click)="limpiarFiltros()">
+          Limpiar
+        </button>
+      </div>
+    </div>
+
+    <div class="mb-6">
+  <label class="block mb-1 text-sm font-medium text-gray-700">Buscar por código</label>
+  <input
+    type="text"
+    [(ngModel)]="codigoFiltro"
+    (input)="filtrarDespachos()"
+    placeholder="Ej: DSP-2025-00127"
+    class="w-full border border-gray-300 rounded-lg p-2"
+  />
+</div>
+
+    <div class="border border-gray-100 rounded-lg overflow-hidden">
+
+      <table class="w-full">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-5 py-3.5 text-left text-sm font-bold text-gray-700">Vale</th>
+            <th class="px-5 py-3.5 text-left text-sm font-bold text-gray-700">Obra</th>
+            <th class="px-5 py-3.5 text-left text-sm font-bold text-gray-700">Objeto</th>
+            <th class="px-5 py-3.5 text-left text-sm font-bold text-gray-700">Empresa</th>
+            <th class="px-5 py-3.5 text-left text-sm font-bold text-gray-700">Recursos</th>
+            <th class="px-5 py-3.5 text-left text-sm font-bold text-gray-700">Fecha</th>
+            <th class="px-5 py-3.5 text-center text-sm font-black text-gray-700"></th>
+
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100">
+          <!-- Fila de ejemplo -->
+          @for (item of despachosFiltrados;; track item.id) {
+          <tr class="hover:bg-gray-50 transition-colors">
+            <td class="px-5 py-4 text-sm text-gray-700 font-medium">{{item.codigo}}</td>
+            <td class="px-5 py-4 text-sm text-gray-600">{{item.obra?.descripcion}}</td>
+            <td class="px-5 py-4 text-sm text-gray-600">{{item.objeto?.descripcion}}</td>
+            <td class="px-5 py-4 text-sm text-gray-600">{{item.empresa?.nombre}}</td>
+            <td class="px-5 py-4 text-sm text-gray-600">{{item.despachos?.length}}</td>
+            <td class="px-5 py-4 text-sm text-gray-600">{{item.fecha | date }}</td>
+            <td class="px-5 py-4 text-center">
+              <div class="flex flex-wrap justify-center gap-2">
+                <button type="button" (click)="openModal(item)"
+                  class="text-emerald-700 hover:text-white border border-emerald-700 hover:bg-emerald-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-3 py-2.5 text-center me-1 mb-1 dark:border-emerald-500 dark:text-emerald-500 dark:hover:text-white dark:hover:bg-emerald-500 dark:focus:ring-emerald-800">Ver
+                  Items</button>
+                <button type="button" (click)="cancelVale(item)"
+                  class="text-red-700 hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-3 py-2.5 text-center me-1 mb-1 dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900">Cancelar</button>
+
+              </div>
+            </td>
+          </tr>
+          }
+
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</div>
