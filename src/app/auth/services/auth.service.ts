@@ -11,7 +11,7 @@ export class AuthService {
 
   login(credentials: LoginRequest): Observable<JwtResponse> {
     return this.http.post<JwtResponse>(
-      `${environment.api_route}/api/auth/signin`,
+      `${environment.api_route}/auth/signin`,
       credentials
     );
   }

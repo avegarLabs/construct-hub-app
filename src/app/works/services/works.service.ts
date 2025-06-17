@@ -18,7 +18,7 @@ export class WorksService {
 
   loadWorks() {
     this.http
-      .get<WorksListItem[]>(`${environment.api_route}/api/obras`)
+      .get<WorksListItem[]>(`${environment.api_route}/obras`)
       .subscribe((data) => {
         this.list.set(data);
         console.log({ data });
@@ -27,7 +27,7 @@ export class WorksService {
 
   newWorks(model: Works) {
     this.http
-      .post<Works>(`${environment.api_route}/api/obras`, model)
+      .post<Works>(`${environment.api_route}/obras`, model)
       .subscribe((data) => {
         this.loadWorks();
       });
@@ -35,7 +35,7 @@ export class WorksService {
 
   editWorks(id: number, model: Works) {
     return this.http
-      .put<WorksListItem>(`${environment.api_route}/api/obras/${id}`, model)
+      .put<WorksListItem>(`${environment.api_route}/obras/${id}`, model)
       .subscribe((data) => {
         this.loadWorks();
       });
@@ -43,7 +43,7 @@ export class WorksService {
 
   removeWorks(id: number) {
     this.http
-      .delete<boolean>(`${environment.api_route}/api/obras/${id}`)
+      .delete<boolean>(`${environment.api_route}/obras/${id}`)
       .subscribe((data) => {
         this.loadWorks();
       });
@@ -51,7 +51,7 @@ export class WorksService {
 
   getWorks(id: number) {
     this.http
-      .get<WorksListItem>(`${environment.api_route}/api/obras/${id}`)
+      .get<WorksListItem>(`${environment.api_route}/obras/${id}`)
       .subscribe((data) => {
         this.work.set(data);
       });
@@ -60,7 +60,7 @@ export class WorksService {
   addEnterprises(workId: number, ids: number[]) {
     return this.http
       .put<WorksListItem>(
-        `${environment.api_route}/api/obras/add/${workId}`,
+        `${environment.api_route}/obras/add/${workId}`,
         ids
       )
       .subscribe((data) => {
@@ -71,7 +71,7 @@ export class WorksService {
   removeEnterprises(workId: number, entId:number) {
     return this.http
       .get<WorksListItem>(
-        `${environment.api_route}/api/obras/removeIn/${workId}/emp/${entId}`,
+        `${environment.api_route}/obras/removeIn/${workId}/emp/${entId}`,
       )
       .subscribe((data) => {
         this.getWorks(workId);

@@ -13,7 +13,7 @@ export class ObjectService {
   loadObjects(workId: number) {
     this.http
       .get<ObjetctListItem[]>(
-        `${environment.api_route}/api/objetos/obra/${workId}`
+        `${environment.api_route}/objetos/obra/${workId}`
       )
       .subscribe((data) => {
         this.list.set(data);
@@ -23,7 +23,7 @@ export class ObjectService {
 
   newObject(model: Object) {
     this.http
-      .post<ObjetctListItem>(`${environment.api_route}/api/objetos`, model)
+      .post<ObjetctListItem>(`${environment.api_route}/objetos`, model)
       .subscribe((data) => {
         console.log(data)
         this.loadObjects(model.obraId);
@@ -32,7 +32,7 @@ export class ObjectService {
 
   removeObject(workId: number, id: number) {
     this.http
-      .delete<boolean>(`${environment.api_route}/api/objetos/${id}`)
+      .delete<boolean>(`${environment.api_route}/objetos/${id}`)
       .subscribe((data) => {
         this.loadObjects(workId);
       });

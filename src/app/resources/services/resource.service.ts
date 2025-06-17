@@ -17,7 +17,7 @@ export class ResourceService {
   loadResources(workId: number) {
     this.http
       .get<ResourceListItem[]>(
-        `${environment.api_route}/api/recursos/obra/${workId}`
+        `${environment.api_route}/recursos/obra/${workId}`
       )
       .subscribe((data) => {
         this.list.set(data);
@@ -27,7 +27,7 @@ export class ResourceService {
 
   newResource(model: Resource) {
     this.http
-      .post<ResourceListItem>(`${environment.api_route}/api/recursos`, model)
+      .post<ResourceListItem>(`${environment.api_route}/recursos`, model)
       .subscribe((data) => {
         console.log(data);
         this.loadResources(model.obraId);
@@ -37,7 +37,7 @@ export class ResourceService {
   updateResource(recId: number, model: Resource) {
     this.http
       .put<ResourceListItem>(
-        `${environment.api_route}/api/recursos/${recId}`,
+        `${environment.api_route}/recursos/${recId}`,
         model
       )
       .subscribe((data) => {
@@ -48,7 +48,7 @@ export class ResourceService {
 
   removeResources(workId: number, id: number) {
     this.http
-      .delete<boolean>(`${environment.api_route}/api/recursos/${id}`)
+      .delete<boolean>(`${environment.api_route}/recursos/${id}`)
       .subscribe((data) => {
         this.loadResources(workId);
       });

@@ -40,7 +40,7 @@ export class EnterpriseService {
 
   newEnterprise(model: Enterprise) {
     this.http
-      .post<EnterpriseListItem>(`${environment.api_route}/api/empresas`, model)
+      .post<EnterpriseListItem>(`${environment.api_route}/empresas`, model)
       .subscribe((data) => {
         this.loadEnterprise();
       });
@@ -53,7 +53,7 @@ export class EnterpriseService {
     };
     return this.http
       .put<EnterpriseListItem>(
-        `${environment.api_route}/api/empresas/${model.id}`,
+        `${environment.api_route}/empresas/${model.id}`,
         data
       )
       .subscribe((data) => {
@@ -63,7 +63,7 @@ export class EnterpriseService {
 
   removeEnterprise(id: number) {
     this.http
-      .delete<boolean>(`${environment.api_route}/api/empresas/${id}`)
+      .delete<boolean>(`${environment.api_route}/empresas/${id}`)
       .subscribe((data) => {
         this.loadEnterprise();
       });

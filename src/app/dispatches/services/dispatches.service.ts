@@ -20,7 +20,7 @@ export class DispatchesService {
 
   loadDispatches() {
     this.http
-      .get<DispatcheListItem[]>(`${environment.api_route}/api/vales`)
+      .get<DispatcheListItem[]>(`${environment.api_route}/vales`)
       .subscribe((data) => {
         console.log(data)
         this.list.set(data);
@@ -29,7 +29,7 @@ export class DispatchesService {
 
   newDispatches(model: Dispatches) {
     this.http
-      .post<DispatcheListItem[]>(`${environment.api_route}/api/vales`, model)
+      .post<DispatcheListItem[]>(`${environment.api_route}/vales`, model)
       .subscribe((data) => {
         this.loadDispatches();
       });
@@ -37,7 +37,7 @@ export class DispatchesService {
 
    cancelDispatches(valeId:number) {
     this.http
-      .delete<Boolean>(`${environment.api_route}/api/vales/${valeId}`)
+      .delete<Boolean>(`${environment.api_route}/vales/${valeId}`)
       .subscribe((data) => {
         this.loadDispatches();
       });
