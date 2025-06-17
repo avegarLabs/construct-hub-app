@@ -6,7 +6,7 @@ COPY package*.json ./
 
 # Instala TODAS las dependencias, incluyendo devDependencies
 # No establezcas NODE_ENV=production aquí
-RUN npm ci --prefer-offline --no-audit
+RUN npm install
 
 # Copia el resto de la app
 COPY . .
