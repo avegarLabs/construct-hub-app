@@ -1,6 +1,6 @@
 {
   "/api": {
-    "target": "http://construct-hub:8080/",
+    "target": "http://construct-hub:8080",
     "secure": false,
     "changeOrigin": true,
     "logLevel": "debug"
