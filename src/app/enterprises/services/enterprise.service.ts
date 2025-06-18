@@ -32,7 +32,7 @@ export class EnterpriseService {
 
   loadEnterprise() {
     this.http
-      .get<EnterpriseListItem[]>(`${environment.api_route}/api/empresas`)
+      .get<EnterpriseListItem[]>(`${environment.api_route}/empresas`)
       .subscribe((data) => {
         this.list.set(data);
       });
