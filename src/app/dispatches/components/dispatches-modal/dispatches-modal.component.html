@@ -1,197 +1,197 @@
 <div class="bg-white rounded-xl shadow-lg p-6 h-full">
-  <div class="mb-6 bg-gray-50 p-4 rounded-lg border border-gray-200">
-    <div class="flex items-center">
-      <i class="fas fa-barcode text-xl text-gray-600 mr-3"></i>
+  <div class="flex flex-col h-full">
+    <div class="mb-6 bg-gray-50 p-4 rounded-lg border border-gray-200">
+      <div class="flex items-center">
+        <i class="fas fa-barcode text-xl text-gray-600 mr-3"></i>
+        <div>
+          <p class="text-sm text-gray-500">Código de Despacho</p>
+          <p class="text-lg font-mono font-bold">{{code}}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <!-- Selección de Obra -->
       <div>
-        <p class="text-sm text-gray-500">Código de Despacho</p>
-        <p class="text-lg font-mono font-bold">{{code}}</p>
-      </div>
-    </div>
-  </div>
-
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-    <!-- Selección de Obra -->
-    <div>
-      <label class="block text-sm font-medium text-gray-700 mb-2">
-        <i class="fas fa-hard-hat mr-2 text-blue-600"></i>
-        Seleccione una Obra
-      </label>
-      <div class="relative">
-        <select
-          class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          (change)="onSelect($event.target.value)">
-
-          <option value="">-- Seleccione una obra --</option>
-          @for (item of obraServ.list(); track item.id) {
-          <option [value]="item.id">{{item.codigo}} - {{item.descripcion}}</option>
-          }
-        </select>
-      </div>
-    </div>
-
-    <!-- Selección de Empresa -->
-    <div>
-      <label class="block text-sm font-medium text-gray-700 mb-2">
-        <i class="fas fa-building mr-2 text-green-600"></i>
-        Empresa Construct.
-      </label>
-      <div class="relative">
-        <select
-          class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          (change)="onSelectEmpresa($event.target.value)">
-
-          <option value="">-- Seleccione una empresa --</option>
-          @for (item of enterpriseList; track item.id) {
-          <option [value]="item.id">{{item.codigo}} - {{item.descripcion}}</option>
-          }
-        </select>
-      </div>
-    </div>
-
-    <!-- Selección de Objeto -->
-    <div>
-      <label class="block text-sm font-medium text-gray-700 mb-2">
-        <i class="fas fa-drafting-compass mr-2 text-purple-600"></i>
-        Objeto de la Obra
-      </label>
-      <div class="relative">
-        <select
-          class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          (change)="onSelectObjeto($event.target.value)">
-          <option value="">-- Seleccione un objeto --</option>
-          @for (item of objServ.list(); track item.id) {
-          <option [value]="item.id">{{item.codigo}} - {{item.descripcion}}</option>
-          }
-        </select>
-      </div>
-    </div>
-  </div>
-
-  <div class="bg-gray-50 rounded-lg p-6 mb-8 border border-gray-200">
-    <h2 class="text-xl font-semibold mb-4 text-gray-800 flex items-center">
-      <i class="fas fa-boxes mr-2 text-orange-500"></i>
-      Agregar Recursos al Despacho
-    </h2>
-
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-      <!-- Selección de Recurso -->
-      <div class="md:col-span-2">
         <label class="block text-sm font-medium text-gray-700 mb-2">
-          Recurso a Despachar
+          <i class="fas fa-hard-hat mr-2 text-blue-600"></i>
+          Seleccione una Obra
         </label>
         <div class="relative">
-          <select #selectRecurso
+          <select
             class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            (change)="onSelectRecursos($event.target.value)">
+            (change)="onSelect($event.target.value)">
 
-            <option value="">-- Seleccione un recurso --</option>
-            @for (item of resourcesServ.list(); track item.id) {
-            <option [value]="item.id">{{item.codigo}} - {{item.descripcion}}({{item.um}})</option>
+            <option value="">-- Seleccione una obra --</option>
+            @for (item of obraServ.list(); track item.id) {
+            <option [value]="item.id">{{item.codigo}} - {{item.descripcion}}</option>
             }
           </select>
         </div>
       </div>
 
-      <!-- Cantidad -->
+      <!-- Selección de Empresa -->
       <div>
         <label class="block text-sm font-medium text-gray-700 mb-2">
-          Cantidad
+          <i class="fas fa-building mr-2 text-green-600"></i>
+          Empresa Construct.
         </label>
         <div class="relative">
-          <input #cantidadInput type="number" min="0" value="1"
-            class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+          <select
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            (change)="onSelectEmpresa($event.target.value)">
+
+            <option value="">-- Seleccione una empresa --</option>
+            @for (item of enterpriseList; track item.id) {
+            <option [value]="item.id">{{item.codigo}} - {{item.nombre}}</option>
+            }
+          </select>
         </div>
       </div>
 
-      <!-- Botón Agregar -->
-      <div class="flex items-end">
-        <button
-          class="w-full bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-lg flex items-center justify-center"
-          (click)="populateRecursos(cantidadInput.value, cantidadInput, selectRecurso)">
-
-          Agregar
-        </button>
+      <!-- Selección de Objeto -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">
+          <i class="fas fa-drafting-compass mr-2 text-purple-600"></i>
+          Objeto de la Obra
+        </label>
+        <div class="relative">
+          <select
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            (change)="onSelectObjeto($event.target.value)">
+            <option value="">-- Seleccione un objeto --</option>
+            @for (item of objServ.list(); track item.id) {
+            <option [value]="item.id">{{item.codigo}} - {{item.descripcion}}</option>
+            }
+          </select>
+        </div>
       </div>
     </div>
-    @if (selectedRecurso) {
-    <div class="mt-3 mb-3">
-      <label class="block text-sm font-medium text-gray-700 mb-2">
-        Cantidad Disponible: {{disponible}}
-      </label>
-    </div>
-    }
-  </div>
 
-  <!-- Lista de recursos despachados -->
-  <div class="mb-8">
-    <h2 class="text-xl font-semibold mb-4 text-gray-800 flex items-center">
-      <i class="fas fa-clipboard-list mr-2 text-blue-500"></i>
-      Recursos a Despachar
-    </h2>
+    <div class="bg-gray-50 rounded-lg p-6 mb-8 border border-gray-200">
+      <h2 class="text-xl font-semibold mb-4 text-gray-800 flex items-center">
+        <i class="fas fa-boxes mr-2 text-orange-500"></i>
+        Agregar Recursos al Despacho
+      </h2>
 
-    <div class="overflow-x-auto rounded-lg border border-gray-200">
-      <table class="min-w-full divide-y divide-gray-200">
-        <thead class="bg-gray-50">
-          <tr>
-            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Código
-            </th>
-            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Recurso
-            </th>
-            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              U/M
-            </th>
-            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Cantidad
-            </th>
-            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Acciones
-            </th>
-          </tr>
-        </thead>
-        <tbody class="bg-white divide-y divide-gray-200">
-          @for (item of toDesplist; track $index) {
-          <!-- Recurso 1 -->
-          <tr class="hover:bg-gray-50">
-            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-              {{item.resource.codigo}}
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-              {{item.resource.descripcion}}
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-              {{item.resource.um}}
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-              {{item.cantidad}}
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm">
-              <button class="text-red-600 hover:text-red-900" (click)="removeItem(item.resource.id)">
-                Eliminar
-              </button>
-            </td>
-          </tr>
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <!-- Selección de Recurso -->
+        <div class="md:col-span-2">
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            Recurso a Despachar
+          </label>
+          <div class="relative">
+            <select #selectRecurso
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              (change)="onSelectRecursos($event.target.value)">
 
-          }
+              <option value="">-- Seleccione un recurso --</option>
+              @for (item of resourcesServ.list(); track item.id) {
+              <option [value]="item.id">{{item.codigo}} - {{item.descripcion}}({{item.um}})</option>
+              }
+            </select>
+          </div>
+        </div>
 
+        <!-- Cantidad -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            Cantidad
+          </label>
+          <div class="relative">
+            <input #cantidadInput type="number" min="0" value="1"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+          </div>
+        </div>
 
+        <!-- Botón Agregar -->
+        <div class="flex items-end">
+          <button
+            class="w-full bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-lg flex items-center justify-center"
+            (click)="populateRecursos(cantidadInput.value, cantidadInput, selectRecurso)">
 
-        </tbody>
-      </table>
+            Agregar
+          </button>
+        </div>
+      </div>
+      @if (selectedRecurso) {
+      <div class="mt-3 mb-3">
+        <label class="block text-sm font-medium text-gray-700 mb-2">
+          Cantidad Disponible: {{disponible}}
+        </label>
+      </div>
+      }
     </div>
 
-    <div class="flex justify-end space-x-4 pt-4 border-t border-gray-200">
-      <button type="button"
-        class="text-red-700 hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-3 py-2.5 text-center me-1 mb-1 dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900"
-        (click)="cancel()">Cancelar</button>
+    <!-- Lista de recursos despachados -->
+    <div class="mb-8">
+      <h2 class="text-xl font-semibold mb-4 text-gray-800 flex items-center">
+        <i class="fas fa-clipboard-list mr-2 text-blue-500"></i>
+        Recursos a Despachar
+      </h2>
 
-      <button type="button" (click)="confim()"
-        class="text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-3 py-2.5 text-center me-1 mb-1 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800">Guardar
-        Despacho</button>
+      <div class="overflow-x-auto rounded-lg border border-gray-200">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Código
+              </th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Recurso
+              </th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                U/M
+              </th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Cantidad
+              </th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Acciones
+              </th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            @for (item of toDesplist; track $index) {
+            <!-- Recurso 1 -->
+            <tr class="hover:bg-gray-50">
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                {{item.resource.codigo}}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                {{item.resource.descripcion}}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                {{item.resource.um}}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                {{item.cantidad}}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm">
+                <button class="text-red-600 hover:text-red-900" (click)="removeItem(item.resource.id)">
+                  Eliminar
+                </button>
+              </td>
+            </tr>
+
+            }
+
+
+
+          </tbody>
+        </table>
+
+      </div>
+      <div class="sticky bottom-0 bg-white pt-4 border-t border-gray-200">
+        <div class="flex justify-end space-x-4">
+          <button type="button"
+            class="text-red-700 hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-3 py-2.5 text-center me-1 mb-1 dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900"
+            (click)="cancel()">Cancelar</button>
+
+          <button type="button" (click)="confim()"
+            class="text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-3 py-2.5 text-center me-1 mb-1 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800">Guardar
+            Despacho</button>
+        </div>
+      </div>
     </div>
-
-
-
-
   </div>

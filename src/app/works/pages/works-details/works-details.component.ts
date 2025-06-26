@@ -11,7 +11,7 @@ import {
   faAdd,
   faKaaba,
   faCubes,
-  faSearch
+  faSearch,
 } from '@fortawesome/free-solid-svg-icons';
 import { MatDialog } from '@angular/material/dialog';
 import { AddEmpesasModalComponent } from '../../components/add-empesas-modal/add-empesas-modal.component';
@@ -24,6 +24,7 @@ import { ConfirmationService } from '../../../share/confirmation.service';
 import { ObjetctListItem } from '../../interfaces/objects-iterface';
 import { EnterpriseListItem } from '../../../enterprises/interfaces/enterprise-interface';
 import { DispatchReportService } from '../../../dispatches/services/dispatch-report.service';
+import { DispatchesService } from '../../../dispatches/services/dispatches.service';
 
 @Component({
   selector: 'app-works-details',
@@ -39,9 +40,16 @@ export default class WorksDetailsComponent {
   resourceServ = inject(ResourceService);
   confServ = inject(ConfirmationService);
   printSer = inject(DispatchReportService);
+  dispServ = inject(DispatchesService);
 
   constructor() {
-    this.iconLibrary.addIcons(faHelmetSafety, faAdd, faKaaba, faCubes, faSearch);
+    this.iconLibrary.addIcons(
+      faHelmetSafety,
+      faAdd,
+      faKaaba,
+      faCubes,
+      faSearch
+    );
   }
 
   private routeParams = toSignal(this.actRoute.params, {
@@ -80,18 +88,32 @@ export default class WorksDetailsComponent {
   }
 
   removeEmpresa(emp: EnterpriseListItem) {
-     this.confServ
-      .confirm(
-        'Eliminar Empresa',
-        `¿Está seguro de eliminar la empresa "${emp.codigo}"?`
-      )
-      .subscribe((confirmed) => {
-        if (confirmed) {
-         const id = this.workId();
-         this.workService.removeEnterprises(id, emp.id);
+    this.dispServ.loadDispatchesInEnterprise(emp.id).subscribe({
+      next: (dispatches) => {
+        if (dispatches.length > 0) {
+          this.confServ
+            .confirm(
+              'Error',
+              `No esta permitido borrar empresas con despachos asociados`
+            )
+            .subscribe((confirmed) => {});
+          return;
+        } else {
+          this.confServ
+            .confirm(
+              'Eliminar Empresa',
+              `¿Está seguro de eliminar la empresa "${emp.codigo}"?`
+            )
+            .subscribe((confirmed) => {
+              if (confirmed) {
+                const id = this.workId();
+                this.workService.removeEnterprises(id, emp.id);
+              }
+            });
         }
-      });
-    
+      },
+      error: (err) => this.handleError(err),
+    });
   }
 
   openModalObject() {
@@ -109,20 +131,34 @@ export default class WorksDetailsComponent {
       }
     });
   }
-  
+
   removeObject(obj: ObjetctListItem) {
-     this.confServ
-      .confirm(
-        'Eliminar Objeto',
-        `¿Está seguro de eliminar el Objeto "${obj.codigo}"?`
-      )
-      .subscribe((confirmed) => {
-        if (confirmed) {
-         const id = this.workId();
-         this.objectServ.removeObject(id, obj.id);
+    this.dispServ.loadDispatchesInObjetos(obj.id).subscribe({
+      next: (dispatches) => {
+        if (dispatches.length > 0) {
+          this.confServ
+            .confirm(
+              'Error',
+              `No esta permitido borrar objetos con despachos asociados`
+            )
+            .subscribe((confirmed) => {});
+          return;
+        } else {
+          this.confServ
+            .confirm(
+              'Eliminar Objeto',
+              `¿Está seguro de eliminar el Objeto "${obj.codigo}"?`
+            )
+            .subscribe((confirmed) => {
+              if (confirmed) {
+                const id = this.workId();
+                this.objectServ.removeObject(id, obj.id);
+              }
+            });
         }
-      });
-   
+      },
+      error: (err) => this.handleError(err),
+    });
   }
 
   openModalResource(data: ResourceListItem) {
@@ -142,15 +178,15 @@ export default class WorksDetailsComponent {
   }
 
   removeResource(resource: ResourceListItem) {
-     this.confServ
+    this.confServ
       .confirm(
         'Eliminar Recurso',
         `¿Está seguro de eliminar el recurso "${resource.codigo}"?`
       )
       .subscribe((confirmed) => {
         if (confirmed) {
-         const id = this.workId();
-         this.resourceServ.removeResources(id, resource.id);
+          const id = this.workId();
+          this.resourceServ.removeResources(id, resource.id);
         }
       });
   }
@@ -159,7 +195,15 @@ export default class WorksDetailsComponent {
     this.resourceServ.searchTerm.set(term);
   }
 
-  printInv(){
-    this.printSer.generateInventoryReport(this.workService.work(), this.resourceServ.filteredResources());
+  printInv() {
+    this.printSer.generateInventoryReport(
+      this.workService.work(),
+      this.resourceServ.filteredResources()
+    );
+  }
+
+  handleError(error: any) {
+    console.error('Error verificando despachos', error);
+    // Opcional: Mostrar mensaje de error al usuario
   }
 }

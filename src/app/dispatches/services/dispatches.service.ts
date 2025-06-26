@@ -5,6 +5,7 @@ import {
   Dispatches,
 } from '../interfaces/dispatches-iterface';
 import { environment } from '../../../environments/environment';
+import { tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -12,6 +13,7 @@ import { environment } from '../../../environments/environment';
 export class DispatchesService {
   private http = inject(HttpClient);
   list = signal<DispatcheListItem[]>([]);
+  tempList = signal<DispatcheListItem[]>([]);
   selectedEnterpriseId = signal<number | null>(null);
 
   constructor() {
@@ -22,7 +24,7 @@ export class DispatchesService {
     this.http
       .get<DispatcheListItem[]>(`${environment.api_route}/vales`)
       .subscribe((data) => {
-        console.log(data)
+        console.log(data);
         this.list.set(data);
       });
   }
@@ -35,13 +37,27 @@ export class DispatchesService {
       });
   }
 
-   cancelDispatches(valeId:number) {
+  cancelDispatches(valeId: number) {
     this.http
       .delete<Boolean>(`${environment.api_route}/vales/${valeId}`)
       .subscribe((data) => {
         this.loadDispatches();
       });
   }
-  
 
+  loadDispatchesInObjetos(objId: number) {
+    return this.http
+      .get<DispatcheListItem[]>(
+        `${environment.api_route}/vales/byObjeto/${objId}`
+      )
+      .pipe(tap((data) => this.tempList.set(data)));
+  }
+
+  loadDispatchesInEnterprise(entId: number) {
+    return this.http
+      .get<DispatcheListItem[]>(
+        `${environment.api_route}/vales/byEmpresa/${entId}`
+      )
+      .pipe(tap((data) => this.tempList.set(data)));
+  }
 }
