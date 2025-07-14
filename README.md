@@ -1,3 +1,5 @@
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/avegarLabs/construct-hub-app)
+
 # ConstructHubApp
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.13.
