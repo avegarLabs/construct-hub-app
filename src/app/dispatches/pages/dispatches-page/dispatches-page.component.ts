@@ -15,6 +15,7 @@ import { EnterpriseListItem } from '../../../enterprises/interfaces/enterprise-i
 import { FormsModule } from '@angular/forms';
 import { ConfirmationService } from '../../../share/confirmation.service';
 import { DispatchReportService } from '../../services/dispatch-report.service';
+import { TimeReportModalComponent } from '../../components/time-report-modal/time-report-modal.component';
 
 @Component({
   selector: 'app-dispatches-page',
@@ -48,7 +49,7 @@ export default class DispatchesPageComponent {
   }
 
   openModal(list: DespachoListItem) {
-    console.log(list)
+    // console.log(list)
     const dialogRef = this.dialog.open(ItemDispatchesModalComponent, {
       width: '900px',
       panelClass: 'tailwind-modal-panel',
@@ -129,6 +130,45 @@ export default class DispatchesPageComponent {
   }
 
   controlDespachos(): void {
-    this.reportService.generateDispatchReport(this.despachosFiltrados);
+    const dialogRef = this.dialog.open(TimeReportModalComponent, {
+      width: '900px',
+      panelClass: 'tailwind-modal-panel',
+      data: {},
+    });
+
+    dialogRef.afterClosed().subscribe((result: any) => {
+      if (result) {
+      //  console.log('Opción seleccionada:', result);
+        if (result.selectAll) {
+          this.reportService.generateDispatchReport(this.despachosFiltrados);
+        } else if (result.dateRange) {
+          const { startDate, endDate } = result.dateRange;
+          const arrayFilter = this.filterDespachosByDateRange(
+            startDate,
+            endDate
+          );
+          console.log(arrayFilter);
+          if (arrayFilter.length === 0) {
+            alert(
+              'No existen despachos en el intervalo especificado, Revise sus datos!!!'
+            );
+          } else {
+            this.reportService.generateDispatchReport(arrayFilter);
+          }
+        }
+      }
+    });
+  }
+
+  filterDespachosByDateRange(startDate: string, endDate: string): any[] {
+    if (!startDate || !endDate) {
+      return [...this.despachosFiltrados];
+    }
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    return this.despachosFiltrados.filter((despacho) => {
+      const fechaDespacho = new Date(despacho.fecha);
+      return fechaDespacho >= start && fechaDespacho <= end;
+    });
   }
 }

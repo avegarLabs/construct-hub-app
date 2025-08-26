@@ -11,9 +11,10 @@ import {
   Dispatches,
   ResourceCuant,
 } from '../../interfaces/dispatches-iterface';
-
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 @Component({
   selector: 'app-dispatches-modal',
+  imports: [MatPaginatorModule],
   templateUrl: './dispatches-modal.component.html',
 })
 export class DispatchesModalComponent implements OnInit {
@@ -31,6 +32,10 @@ export class DispatchesModalComponent implements OnInit {
   toDesplist: any[] = [];
   disponible: string = '';
   code: string = '';
+
+  pageSize = 4;
+  pageIndex = 0;
+  pageSizeOptions = [4];
 
   constructor(
     private dialogRef: MatDialogRef<DispatchesModalComponent>,
@@ -82,19 +87,34 @@ export class DispatchesModalComponent implements OnInit {
       alert('Debe definir una cantidad');
       return;
     }
-    if (this.selectedRecurso && this.selectedRecurso.disponible > cantidad) {
-      const item = {
-        resource: this.selectedRecurso,
-        cantidad: cantidad,
-      };
-      this.toDesplist.push(item);
-      inputElement.value = '1';
-      selectElement.value = '';
-      this.selectedRecurso = null;
-    } else {
-      alert('Error al agregar el recurso  al despacho, revise sus datos!!!');
+    if (this.isPresent(this.selectedRecurso)) {
+      alert(
+        'El recurso seleccionado ya existe en la lista, revise sus datos!!!'
+      );
       return;
+    } else {
+      if (cantidad <= this.selectedRecurso.disponible) {
+        const item = {
+          resource: this.selectedRecurso,
+          cantidad: cantidad,
+        };
+        this.toDesplist.push(item);
+        inputElement.value = '1';
+        selectElement.value = '';
+        this.selectedRecurso = null;
+      } else {
+        alert('Error al agregar el recurso  al despacho, revise sus datos!!!');
+        return;
+      }
     }
+  }
+
+  isPresent(selectedRecurso: ResourceListItem) {
+    return this.toDesplist.find(
+      (item) => item.resource.id === selectedRecurso.id
+    )
+      ? true
+      : false;
   }
 
   removeItem(id: number) {
@@ -148,5 +168,14 @@ export class DispatchesModalComponent implements OnInit {
 
     const nuevoConsecutivo = (maxConsecutivo + 1).toString().padStart(5, '0');
     return `${prefijo}${nuevoConsecutivo}`;
+  }
+
+  get paginatedRecursos() {
+    const start = this.pageIndex * this.pageSize;
+    return this.toDesplist.slice(start, start + this.pageSize);
+  }
+  handlePageEvent(event: any) {
+    this.pageSize = event.pageSize;
+    this.pageIndex = event.pageIndex;
   }
 }
