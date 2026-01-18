@@ -5,59 +5,65 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-# Build output
+# Build output (will be generated during build)
 dist/
 dist-ssr/
 .angular/
-.angular/cache/
 
-# Testing
+# Testing files (not needed for production build)
 coverage/
 .nyc_output/
 karma.conf.js
+src/test.ts
+*.spec.ts
+tsconfig.spec.json
+e2e/
 
-# IDE
+# IDE configurations
 .vscode/
 .idea/
 *.swp
 *.swo
+.editorconfig
 
-# Git
+# Git files
 .git/
 .gitignore
 .gitattributes
 
-# Environment
+# Environment files (should be handled separately)
 .env
 .env.local
 .env.*.local
 
-# OS
+# OS files
 .DS_Store
 Thumbs.db
 
 # Logs
 *.log
 
-# Documentation
+# Documentation (not needed for build)
 README.md
 docs/
+LICENSE
 
-# Docker
+# Docker files (avoid recursive copy)
 Dockerfile
 .dockerignore
 docker-compose*.yml
 
-# CI/CD
+# CI/CD (not needed in container)
 .github/
 
-# TypeScript
+# TypeScript build info (will be regenerated)
 *.tsbuildinfo
 
-# Angular
-e2e/
-.editorconfig
-.browserslistrc
-tsconfig.spec.json
-tsconfig.app.json
-src/test.ts
+# IMPORTANT: DO NOT EXCLUDE these files - they are required for Angular build:
+# - tsconfig.json
+# - tsconfig.app.json
+# - angular.json
+# - package.json
+# - package-lock.json
+# - .browserslistrc (needed for browser compatibility)
+# - src/ directory
