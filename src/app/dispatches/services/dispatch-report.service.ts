@@ -2,6 +2,7 @@
 
 import { Injectable } from '@angular/core';
 import {
+  DespachoListItem,
   DispatcheListItem,
   DispatcheReport,
 } from '../interfaces/dispatches-iterface';
@@ -43,7 +44,31 @@ export class DispatchReportService {
       grouped.get(key)!.despachos.push(...item.despachos);
     });
 
-    // 2. Armar el contenido para cada grupo
+    // 2. Consolidar recursos por ID y sumar cantidades
+    grouped.forEach((report) => {
+      const recursosMap = new Map<number, DespachoListItem>();
+
+      report.despachos.forEach((despacho) => {
+        const recursoId = despacho.recurso.id;
+
+        if (recursosMap.has(recursoId)) {
+          // Si el recurso ya existe, sumar la cantidad
+          recursosMap.get(recursoId)!.cantidadDespachada += despacho.cantidadDespachada;
+        } else {
+          // Si es nuevo, agregarlo al mapa con su estructura completa
+          recursosMap.set(recursoId, {
+            id: despacho.id,
+            recurso: despacho.recurso,
+            cantidadDespachada: despacho.cantidadDespachada
+          });
+        }
+      });
+
+      // Reemplazar el array de despachos con los recursos consolidados
+      report.despachos = Array.from(recursosMap.values());
+    });
+
+    // 3. Armar el contenido para cada grupo
     const content: any[] = [];
 
     for (const report of grouped.values()) {
@@ -96,7 +121,7 @@ export class DispatchReportService {
                 { text: 'U/M', style: 'tableHeader' },
                 { text: 'Cantidad', style: 'tableHeader' },
               ],
-              ...report.despachos.map((item, index) => [
+              ...report.despachos.map((item) => [
                 { text: item.recurso.codigo, style: 'tableBody' },
                 { text: item.recurso.descripcion, style: 'tableBody' },
                 { text: item.recurso.um, style: 'tableBody' },
@@ -111,12 +136,12 @@ export class DispatchReportService {
       );
     }
 
-    // 3. Eliminar el último pageBreak
+    // 4. Eliminar el último pageBreak
     if (content.length > 0 && content[content.length - 1].pageBreak) {
       delete content[content.length - 1].pageBreak;
     }
 
-    // 4. Documento
+    // 5. Documento
     const docDefinition = {
       content,
       styles: {
@@ -336,6 +361,12 @@ export class DispatchReportService {
         date.getMonth() + 1
       ).padStart(2, '0')}/${date.getFullYear()}`;
 
+    const formatDateTime = (date: Date) => {
+      const hours = String(date.getHours()).padStart(2, '0');
+      const minutes = String(date.getMinutes()).padStart(2, '0');
+      return `${formatDate(date)} ${hours}:${minutes}`;
+    };
+
     // Convertir la imagen del header en base64
     const toBase64 = (url: string): Promise<string> => {
       return new Promise((resolve, reject) => {
@@ -352,6 +383,11 @@ export class DispatchReportService {
 
     const headerImage = await toBase64('/header.png');
 
+    // Calcular totales
+    const totalRecursos = data.length;
+    const totalCantidad = data.reduce((sum, item) => sum + (item.cantidad || 0), 0);
+    const totalDisponible = data.reduce((sum, item) => sum + (item.disponible || 0), 0);
+
     const docDefinition = {
       content: [
         {
@@ -361,63 +397,140 @@ export class DispatchReportService {
           margin: [0, 0, 0, 20],
         },
         {
-          text: 'Control de Inventario',
+          text: 'Estado del Inventario',
           style: 'header',
-          margin: [0, 0, 0, 20],
-        },
-        {
-          text: `Obra: ${obra.codigo} - ${obra.descripcion}`,
-          alignment: 'left',
-        },
-        {
-          text: `Fecha de reporte: ${formatDate(today)}`,
-          alignment: 'right',
           margin: [0, 0, 0, 10],
         },
         {
+          text: `Al ${formatDateTime(today)}`,
+          style: 'subheader',
+          alignment: 'center',
+          margin: [0, 0, 0, 20],
+        },
+        {
+          columns: [
+            {
+              width: '70%',
+              text: [
+                { text: 'Obra: ', bold: true },
+                { text: `${obra.codigo}` }
+              ]
+            },
+            {
+              width: '30%',
+              text: [
+                { text: 'Fecha: ', bold: true },
+                { text: formatDate(today) }
+              ],
+              alignment: 'right'
+            }
+          ],
+          margin: [0, 0, 0, 5],
+        },
+        {
+          text: `${obra.descripcion}`,
+          style: 'subheader',
+          margin: [0, 0, 0, 20],
+        },
+        {
           table: {
+            headerRows: 1,
             widths: ['auto', '*', 'auto', 'auto', 'auto'],
             body: [
               [
                 { text: 'Código', style: 'tableHeader' },
                 { text: 'Descripción', style: 'tableHeader' },
                 { text: 'U/M', style: 'tableHeader' },
-                { text: 'Cantidad', style: 'tableHeader' },
-                { text: 'Disponible', style: 'tableHeader' },
+                { text: 'Cantidad', style: 'tableHeader', alignment: 'right' },
+                { text: 'Disponible', style: 'tableHeader', alignment: 'right' },
               ],
               ...data.map((item) => [
                 { text: item.codigo, style: 'tableBody' },
                 { text: item.descripcion, style: 'tableBody' },
-                { text: item.um, style: 'tableBody' },
-                { text: item.cantidad, style: 'tableBody' },
-                { text: item.disponible, style: 'tableBody' },
+                { text: item.um, style: 'tableBody', alignment: 'center' },
+                { text: item.cantidad.toFixed(2), style: 'tableBody', alignment: 'right' },
+                { text: item.disponible.toFixed(2), style: 'tableBody', alignment: 'right' },
               ]),
+              // Fila de totales
+              [
+                { text: 'TOTAL', style: 'tableTotal', colSpan: 2, alignment: 'right' },
+                {},
+                { text: `${totalRecursos} recursos`, style: 'tableTotal', alignment: 'center' },
+                { text: totalCantidad.toFixed(2), style: 'tableTotal', alignment: 'right' },
+                { text: totalDisponible.toFixed(2), style: 'tableTotal', alignment: 'right' },
+              ]
             ],
           },
-          layout: 'noBorders',
-          margin: [0, 0, 0, 30],
+          layout: {
+            hLineWidth: function (i: number, node: any) {
+              return (i === 0 || i === 1 || i === node.table.body.length) ? 1 : 0.5;
+            },
+            vLineWidth: function () {
+              return 0;
+            },
+            hLineColor: function (i: number, node: any) {
+              return (i === 0 || i === 1 || i === node.table.body.length) ? '#000000' : '#cccccc';
+            },
+            paddingLeft: function () {
+              return 8;
+            },
+            paddingRight: function () {
+              return 8;
+            },
+            paddingTop: function () {
+              return 6;
+            },
+            paddingBottom: function () {
+              return 6;
+            }
+          },
+          margin: [0, 0, 0, 20],
         },
+        {
+          text: [
+            { text: 'Nota: ', bold: true },
+            { text: 'Este reporte muestra el estado del inventario hasta la fecha y hora indicadas. ' },
+            { text: 'La columna "Disponible" refleja la cantidad actual considerando todos los despachos realizados.' }
+          ],
+          style: 'footer',
+          margin: [0, 10, 0, 0],
+        }
       ],
 
       styles: {
         header: {
-          fontSize: 18,
+          fontSize: 20,
           bold: true,
           alignment: 'center',
-          decoration: 'underline',
+          color: '#2563eb',
         },
         subheader: {
           fontSize: 12,
           bold: true,
+          color: '#1e40af',
         },
         tableHeader: {
           bold: true,
-          fillColor: '#eeeeee',
+          fontSize: 11,
+          fillColor: '#3b82f6',
+          color: '#ffffff',
           margin: [0, 5, 0, 5],
         },
         tableBody: {
+          fontSize: 10,
           margin: [0, 3, 0, 3],
         },
+        tableTotal: {
+          fontSize: 11,
+          bold: true,
+          fillColor: '#dbeafe',
+          margin: [0, 5, 0, 5],
+        },
+        footer: {
+          fontSize: 9,
+          italics: true,
+          color: '#6b7280',
+        }
       },
 
       defaultStyle: {

@@ -5,6 +5,7 @@ import {
   Resource,
   ResourceListItem,
 } from '../../works/interfaces/resource-iterface';
+import { ImportResultDTO } from '../../works/interfaces/import-result.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -65,4 +66,21 @@ export class ResourceService {
         resource.descripcion.toLowerCase().includes(term)
     );
   });
+
+  importResourcesFromExcel(workId: number, file: File) {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    return this.http.post<ImportResultDTO>(
+      `${environment.api_route}/recursos/import/${workId}`,
+      formData
+    );
+  }
+
+  downloadTemplate() {
+    return this.http.get(
+      `${environment.api_route}/recursos/template`,
+      { responseType: 'blob' }
+    );
+  }
 }

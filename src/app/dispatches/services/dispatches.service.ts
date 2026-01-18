@@ -1,11 +1,11 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Observable, tap } from 'rxjs';
 import {
   DispatcheListItem,
   Dispatches,
 } from '../interfaces/dispatches-iterface';
 import { environment } from '../../../environments/environment';
-import { tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -25,22 +25,39 @@ export class DispatchesService {
       .get<DispatcheListItem[]>(`${environment.api_route}/vales`)
       .subscribe((data) => {
         console.log(data);
-        this.list.set(data);
+        // Ordenar por fecha descendente (más reciente primero)
+        const sortedData = data.sort((a, b) =>
+          new Date(b.fecha).getTime() - new Date(a.fecha).getTime()
+        );
+        this.list.set(sortedData);
       });
   }
 
-  newDispatches(model: Dispatches) {
-    this.http
+  /**
+   * Genera el siguiente código de despacho disponible desde el backend
+   * Garantiza unicidad y previene race conditions
+   */
+  generateNextCode(): Observable<{ codigo: string }> {
+    return this.http.get<{ codigo: string }>(
+      `${environment.api_route}/vales/next-code`
+    );
+  }
+
+  newDispatches(model: Dispatches): Observable<DispatcheListItem[]> {
+    return this.http
       .post<DispatcheListItem[]>(`${environment.api_route}/vales`, model)
-      .subscribe((data) => {
-        this.loadDispatches();
-      });
+      .pipe(
+        tap(() => {
+          // Recargar la lista de despachos después de crear uno nuevo
+          this.loadDispatches();
+        })
+      );
   }
 
   cancelDispatches(valeId: number) {
     this.http
       .delete<Boolean>(`${environment.api_route}/vales/${valeId}`)
-      .subscribe((data) => {
+      .subscribe(() => {
         this.loadDispatches();
       });
   }
@@ -50,7 +67,15 @@ export class DispatchesService {
       .get<DispatcheListItem[]>(
         `${environment.api_route}/vales/byObjeto/${objId}`
       )
-      .pipe(tap((data) => this.tempList.set(data)));
+      .pipe(
+        tap((data) => {
+          // Ordenar por fecha descendente (más reciente primero)
+          const sortedData = data.sort((a, b) =>
+            new Date(b.fecha).getTime() - new Date(a.fecha).getTime()
+          );
+          this.tempList.set(sortedData);
+        })
+      );
   }
 
   loadDispatchesInEnterprise(entId: number) {
@@ -58,6 +83,14 @@ export class DispatchesService {
       .get<DispatcheListItem[]>(
         `${environment.api_route}/vales/byEmpresa/${entId}`
       )
-      .pipe(tap((data) => this.tempList.set(data)));
+      .pipe(
+        tap((data) => {
+          // Ordenar por fecha descendente (más reciente primero)
+          const sortedData = data.sort((a, b) =>
+            new Date(b.fecha).getTime() - new Date(a.fecha).getTime()
+          );
+          this.tempList.set(sortedData);
+        })
+      );
   }
 }
