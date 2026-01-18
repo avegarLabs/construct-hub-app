@@ -13,18 +13,25 @@ COPY package.json package-lock.json ./
 # --omit=dev is not used here because Angular build needs dev dependencies
 RUN npm ci --prefer-offline --no-audit
 
-# Copy configuration files required for Angular build
+# Copy all configuration files required for Angular + Tailwind build
 COPY tsconfig.json tsconfig.app.json angular.json ./
 COPY .browserslistrc* ./
+COPY tailwind.config.js ./
+COPY postcss.config.js ./
 
 # Verify critical files exist before proceeding
 RUN echo "Verifying critical build files..." && \
     test -f tsconfig.app.json || (echo "ERROR: tsconfig.app.json not found!" && exit 1) && \
     test -f angular.json || (echo "ERROR: angular.json not found!" && exit 1) && \
+    test -f tailwind.config.js || (echo "ERROR: tailwind.config.js not found!" && exit 1) && \
+    test -f postcss.config.js || (echo "ERROR: postcss.config.js not found!" && exit 1) && \
     echo "All critical files verified successfully."
 
 # Copy source code and assets
+# IMPORTANT: Must copy entire src directory to include all styles, assets, and component files
 COPY src ./src
+
+# Copy public directory (static assets like favicon, images, etc.)
 COPY public ./public
 
 # Build Angular application for production

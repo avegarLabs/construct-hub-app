@@ -119,6 +119,10 @@ check_file "tsconfig.json" "true"
 check_file "tsconfig.app.json" "true"
 check_file ".browserslistrc" "false"
 
+# Tailwind CSS configuration (CRITICAL for styles)
+check_file "tailwind.config.js" "true"
+check_file "postcss.config.js" "true"
+
 print_section "2. Docker Configuration"
 
 # Docker files
@@ -133,6 +137,11 @@ check_directory "src" "true"
 check_file "src/main.ts" "true"
 check_file "src/index.html" "true"
 check_directory "public" "false"
+
+# Critical style files (MUST exist for CSS to work)
+check_file "src/styles.scss" "true"
+check_file "src/tailwind.css" "true"
+check_directory "src/assets" "false"
 
 print_section "4. JSON Syntax Validation"
 
@@ -196,6 +205,8 @@ check_not_dockerignored "angular.json"
 check_not_dockerignored "tsconfig.json"
 check_not_dockerignored "package.json"
 check_not_dockerignored "package-lock.json"
+check_not_dockerignored "tailwind.config.js"
+check_not_dockerignored "postcss.config.js"
 
 print_section "7. Nginx Configuration Validation"
 
