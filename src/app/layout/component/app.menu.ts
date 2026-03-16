@@ -4,7 +4,7 @@ import { RouterModule, Router } from '@angular/router';
 import { MenuItem } from 'primeng/api';
 import { AppMenuitem } from './app.menuitem';
 import { AuthService } from '../../auth/services/auth.service';
-import { faKaaba, faTruck, faHelmetSafety, faCubes, faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
+import { faKaaba, faTruck, faHelmetSafety, faCubes, faRightFromBracket, faDatabase } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
     selector: 'app-menu',
@@ -31,6 +31,7 @@ export class AppMenu implements OnInit {
     faHelmetSafety = faHelmetSafety;
     faCubes = faCubes;
     faRightFromBracket = faRightFromBracket;
+    faDatabase = faDatabase;
 
     ngOnInit(): void {
         this.model = [
@@ -54,6 +55,17 @@ export class AppMenu implements OnInit {
                         icon: 'pi pi-fw pi-users',
                         faIcon: this.faHelmetSafety,
                         routerLink: ['/dashboard/enterprise']
+                    }
+                ]
+            },
+            {
+                label: 'Sistema',
+                items: [
+                    {
+                        label: 'Respaldo',
+                        icon: 'pi pi-fw pi-database',
+                        faIcon: this.faDatabase,
+                        routerLink: ['/dashboard/backup']
                     }
                 ]
             },

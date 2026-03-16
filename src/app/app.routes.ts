@@ -32,6 +32,10 @@ export const routes: Routes = [
                 loadComponent: () => import('./dispatches/pages/dispatches-page/dispatches-page.component')
             },
             {
+                path: 'backup',
+                loadComponent: () => import('./backup/pages/backup-page/backup-page.component')
+            },
+            {
                 path: '',
                 redirectTo: 'works',
                 pathMatch: 'full'
